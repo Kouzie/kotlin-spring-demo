@@ -1,34 +1,36 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id("org.springframework.boot") version "2.7.9"
-	id("io.spring.dependency-management") version "1.0.15.RELEASE"
-	kotlin("jvm") version "1.6.21"
-	kotlin("plugin.spring") version "1.6.21"
+    id("org.springframework.boot") version "2.7.9" apply false
+    id("io.spring.dependency-management") version "1.0.15.RELEASE" apply false
+    kotlin("jvm") version "1.6.21" // Kotlin version to use
+    kotlin("plugin.spring") version "1.6.21"
 }
 
-group = "com.example.kotlin"
-version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
-repositories {
-	mavenCentral()
-}
+allprojects {
+    apply(plugin = "org.springframework.boot")
+    apply(plugin = "io.spring.dependency-management")
 
-dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-web")
-	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-	implementation("org.jetbrains.kotlin:kotlin-reflect")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
-}
+    apply(plugin = "org.jetbrains.kotlin.jvm") // jvm
+    apply(plugin = "org.jetbrains.kotlin.plugin.spring") // plugin.spring
 
-tasks.withType<KotlinCompile> {
-	kotlinOptions {
-		freeCompilerArgs = listOf("-Xjsr305=strict")
-		jvmTarget = "11"
-	}
-}
+    group = "com.example"
+    version = "0.0.1-SNAPSHOT"
 
-tasks.withType<Test> {
-	useJUnitPlatform()
+    repositories {
+        mavenCentral()
+    }
+
+    tasks.withType<KotlinCompile> {
+        kotlinOptions {
+            freeCompilerArgs = listOf("-Xjsr305=strict")
+            jvmTarget = "11"
+        }
+    }
+
+    tasks.withType<Test> {
+        useJUnitPlatform()
+    }
 }
