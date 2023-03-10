@@ -3,11 +3,8 @@ package com.example.chapter4.controller
 import com.example.chapter4.model.Customer
 import com.example.chapter4.service.CustomerService
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping("/customer")
@@ -16,14 +13,12 @@ class CustomerController {
     @Autowired
     private lateinit var customerService: CustomerService
 
-    @GetMapping("/{id}")
-    fun getCustomer(@PathVariable id: Int): Customer? {
-        val customer = customerService.getCustomer(id)
-        return customer;
-    }
+    @GetMapping
+    fun getCustomers(@RequestParam(required = false) nameFilter: String) = customerService.searchCustomer(nameFilter)
 
-    @GetMapping("/customers")
-    fun getCustomers(@RequestParam(required = false) nameFilter: String): List<Customer> {
-        return customerService.searchCustomer(nameFilter)
-    }
+    @GetMapping("/{id}")
+    fun getCustomer(@PathVariable id: Int) = customerService.getCustomer(id)
+
+    @PostMapping
+    fun createCustomer(@RequestBody customerMono: Mono<Customer>) = customerService.createCustomer(customerMono)
 }

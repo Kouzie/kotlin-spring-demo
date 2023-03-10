@@ -2,6 +2,11 @@ package com.example.chapter4.service
 
 import com.example.chapter4.model.Customer
 import org.springframework.stereotype.Component
+import reactor.core.Disposable
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.toFlux
+import reactor.kotlin.core.publisher.toMono
 
 @Component
 class CustomerServiceImpl : CustomerService {
@@ -13,8 +18,8 @@ class CustomerServiceImpl : CustomerService {
         )
     }
 
-    override fun getCustomer(id: Int): Customer? {
-        return customers[id]
+    override fun getCustomer(id: Int): Mono<Customer>? {
+        return customers[id].toMono()
     }
 
 //    override fun createCustomer(customer: Customer) {
@@ -30,9 +35,16 @@ class CustomerServiceImpl : CustomerService {
 //        createCustomer(customer)
 //    }
 
-    override fun searchCustomer(nameFilter: String): List<Customer> {
+    override fun searchCustomer(nameFilter: String): Flux<Customer> {
         return customers
             .filter { it.name.contains(nameFilter, true) }
-            .toList();
+            .toList().toFlux();
+    }
+
+    override fun createCustomer(customerMono: Mono<Customer>): Mono<*> {
+        return customerMono.map {
+            customers[it.id] = it
+            it
+        }.toMono()
     }
 }
