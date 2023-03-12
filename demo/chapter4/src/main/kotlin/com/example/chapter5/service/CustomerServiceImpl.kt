@@ -1,8 +1,7 @@
-package com.example.chapter4.service
+package com.example.chapter5.service
 
-import com.example.chapter4.model.Customer
+import com.example.chapter5.model.Customer
 import org.springframework.stereotype.Component
-import reactor.core.Disposable
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toFlux
@@ -18,8 +17,8 @@ class CustomerServiceImpl : CustomerService {
         )
     }
 
-    override fun getCustomer(id: Int): Mono<Customer>? {
-        return customers[id].toMono()
+    override fun getCustomer(id: Int): Mono<Customer> {
+        return customers.getOrNull(id)?.toMono() ?: Mono.empty()
     }
 
 //    override fun createCustomer(customer: Customer) {
